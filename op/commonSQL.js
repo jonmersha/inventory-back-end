@@ -14,6 +14,7 @@ function generateInsertSql(req,tableName,res){
     execute(res,command,tableName);
 }
 
+
 function execute(res,command,tableName){
    // console.log(command)
     con.query(command,(err,result)=>{
@@ -24,11 +25,8 @@ function execute(res,command,tableName){
          res.send(err)
         else
         {
-            
             if(tableName==='Retailer'){
-                //send emails users
                 res.send({"Status":"Success",details:result}); 
-
             }
             else
             res.send({"Status":"Success",details:result});
@@ -36,6 +34,7 @@ function execute(res,command,tableName){
         }
     })
 }
+
 function selectAll(res,tableName){
     execute(res,`SELECT * FROM ${tableName}`);
 }

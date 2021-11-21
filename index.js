@@ -5,6 +5,12 @@ const commands=require('./op/commonSQL.js');
 const profile=require('./op/user_profile.js');
 const nodemailer = require('nodemailer');
 
+
+const https = require('https')
+
+
+var host = 'https://hiramailer.herokuapp.com/em';
+
 const cores =require('cors')
 
 const path = require('path')
@@ -76,108 +82,24 @@ app.get('/vendor',(req,res)=>{
 app.post('/chp',(req,res)=>{
     profile.changePassword(res,req);
 })
+app.post('/signup',(req,res)=>{
+  let command=profile.signUp(req.body,res);
+ 
+})
 app.post('/update_retailer',(req,res)=>{
    // profile.changePassword(res,req.body.userName,req.body.password);
     profile.updateRetailer(res,req);
 })
 
-
 app.post('/reg',(req,res)=>{
     commands.generateInsertSql(req.body.data,req.body.tableName,res) 
 })
 
-app.get('/email',async(req,res)=>{
-
-    let fromMail = 'no_replay@besheger.com';
-    let toMail = 'jonmersha@gmail.com';
-    
-    // let toMail = 'gnbaviskar2@gmail.com,gnbaviskar3@gmail.com';
-    
-    let subject  = 'An email using nodejs app';
-    let text = "is this workingemail from from node js" 
-    
-    // auth
-    let transporter = await nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure:false,
-        auth: {
-            user: "jonmersha@gmail.com",
-            pass: "Yohannes@hira123321"
-        }
-})
-    
-message = {
-    from: "noreplay@email.com",
-    to: "jonmersha@email.com",
-    subject: "Subject",
-    text: "Hello SMTP Email"
-}
-    
-    // send email
-    transporter.sendMail(message, (error, response) => {
-        if (error) {
-            console.log(error);
-        }
-        console.log(response)
-    });
-  
-
-});
-async function sendEamil(){
-    let testAccount = await nodemailer.createTestAccount();
-    let transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true, // true for 465, false for other ports
-        auth: {
-          user: 'jonmersha@gmail.com', // generated ethereal user
-          pass: 'Yohannes@hira123321', // generated ethereal password
-        },
-      });
-
-      let info = await transporter.sendMail({
-        from: '"From Yohannes 👻"', // sender address
-        to: "jonmersha@gmail.com", // list of receivers
-        subject: "Hello ✔", // Subject line
-        text: "Hello world?", // plain text body
-        html: "<b>Hello world?</b>", // html body
-      });
-
-      console.log("Message sent: %s", info.messageId);
-      console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 
 
-}
 
-app.get('/em',(req,res)=>{
-    email2();
 
-});
 
-function email2(){
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'jonmersha@gmail.com',
-          pass: 'Yohannes@hira123321'
-        }
-      });
-      
-      var mailOptions = {
-        from: 'jonmersha@gmail.com',
-        to: 'yohannes@besheger.com',
-        subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
-      };
-      
-      transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
-}
+
 
 app.listen(3000)
