@@ -75,7 +75,7 @@ CREATE TABLE `Retailer` (
   `email` varchar(50) DEFAULT NULL,
   `country` varchar(45) DEFAULT NULL,
   `city` varchar(45) DEFAULT NULL,
-  `password` varchar(45) DEFAULT NULL,
+  `password` varchar(1000) DEFAULT NULL,
   `sex` varchar(10) DEFAULT NULL,
   `dob` varchar(45) DEFAULT NULL,
   `date_created` datetime DEFAULT NULL,

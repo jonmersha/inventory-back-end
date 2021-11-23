@@ -96,10 +96,4 @@ app.post('/reg',(req,res)=>{
 })
 
 
-
-
-
-
-
-
 app.listen(3000)
