@@ -25,16 +25,98 @@ function selectAll(res,tableName){
     execute(res,`SELECT * FROM ${tableName}`);
 }
 
-function changePassword(res,userName,password){
-    let query=`SELECT * FROM beshegercom_inventory.Retailer 
-    where (Retailer.mobile='${userName}' or Retailer.email='${userName}') and Retailer.password='${password}'`;
-    con.query(query ,(err,result)=>{
+function changePassword(req,res){
+    if(req.body.password===req.body.re_password){
+     let salt ='a1624ccea70b57f377372bac81bda372'
+    let newPassword=crypto.pbkdf2Sync(req.body.password, salt,  1000, 64, `sha512`).toString(`hex`);
+    let password=crypto.pbkdf2Sync(req.body.oldPassword, salt,  1000, 64, `sha512`).toString(`hex`);
+
+    //update the password
+    let query=`update  beshegercom_inventory.Retailer
+    set Retailer.password='${newPassword}'
+     where (Retailer.mobile='${req.body.userName}' or Retailer.email='${req.body.userName}') and Retailer.password='${password}'`;
+
+
+     con.query(query ,(err,result)=>{
         if(err)
         res.send(err)
-        else
-        res.send(result)
-    })
+        else{
+            if(result.affectedRows=== 1){
+                let response={
+                    status:'success',
+                    message:'password changed Succefully'
+            }
+                res.send(response)
 
+            }
+            else{
+                let response={
+                    status:'fialed',
+                    message:'Passwrod was not changed'
+            }
+            res.send(response)
+            }
+        }
+
+        //res.send(result)
+    })
+       // res.send(query)
+    }
+    else{
+        let response={
+            status:'fialed',
+            message:'password missamatching'
+    }
+    res.send(response)
+    }
+        
+}
+function changePasswordConf(req,res){
+    if(req.body.password===req.body.re_password){
+     let salt ='a1624ccea70b57f377372bac81bda372'
+    let newPassword=crypto.pbkdf2Sync(req.body.password, salt,  1000, 64, `sha512`).toString(`hex`);
+    let password=crypto.pbkdf2Sync(req.body.oldPassword, salt,  1000, 64, `sha512`).toString(`hex`);
+
+    //update the password
+    let query=`update  beshegercom_inventory.Retailer
+    set Retailer.password='${newPassword}',
+     Retailer.is_verified='1'
+     where (Retailer.mobile='${req.body.userName}' or Retailer.email='${req.body.userName}') and Retailer.password='${password}'`;
+
+
+     con.query(query ,(err,result)=>{
+        if(err)
+        res.send(err)
+        else{
+            if(result.affectedRows=== 1){
+                let response={
+                    status:'success',
+                    message:'password changed Succefully'
+            }
+                res.send(response)
+
+            }
+            else{
+                let response={
+                    status:'fialed',
+                    message:'Passwrod was not changed'
+            }
+            res.send(response)
+            }
+        }
+
+        //res.send(result)
+    })
+       // res.send(query)
+    }
+    else{
+        let response={
+            status:'fialed',
+            message:'password missamatching'
+    }
+    res.send(response)
+    }
+        
 }
 
 function updateRetailer(res,req){
@@ -58,12 +140,25 @@ WHERE Retailer_id = ${req.body.Retailer_id}`;
          if(err)
          res.send(err)
          else
-        res.send(result)
+         if(result.affectedRows=== 1){
+            let response={
+                status:'success',
+                message:'Profile Updated SuccessFully'
+        }
+            res.send(response)
+        }
+        else{
+            let response={
+                status:'fialed',
+                message:'User Not Updated'
+        }
+        res.send(response)
+        }
+
+       // res.send(result)
      })
 
 }
-
-
 function insertStatment(data,tableName){
     
     var keysString='';
@@ -78,12 +173,11 @@ function insertStatment(data,tableName){
     var command= `INSERT INTO ${tableName}(${keysString}) VALUES(${valueStirng})`;
     return command;
 }
-
-
 function signUp(data,res){
 
     let password=randomstring.generate(8);
-    let salt = crypto.randomBytes(16).toString('hex');
+    //let salt = crypto.randomBytes(16).toString('hex');
+    let salt ='a1624ccea70b57f377372bac81bda372'
     data.password=crypto.pbkdf2Sync(password, salt,  1000, 64, `sha512`).toString(`hex`);
    //res.send(data);
     //data.password=pp;
@@ -129,5 +223,54 @@ function execute(command,res,data,password){
 
 }
 
+function login(req,res){
+    let salt ='a1624ccea70b57f377372bac81bda372' //crypto.randomBytes(16).toString('hex');
+    console.log(salt)
+    let passwordCrypted=crypto.pbkdf2Sync(req.body.passWord, salt,  1000, 64, `sha512`).toString(`hex`);
+    console.log(req.body.passWord,passwordCrypted)
+    let query=`SELECT * FROM beshegercom_inventory.Retailer
+    where (Retailer.mobile='${req.body.userName}' or Retailer.email='${req.body.userName}') and Retailer.password='${passwordCrypted}'`;
+    con.query(query ,(err,result)=>{
+        if(err)
+        res.send(err)
+        else{
+           console.log(result)
+            try {
+            let response=result[0]
+            if(response===null){
+                res.send("Failed To Login")
+               
+            }
+            if(response.is_verified===0){
+                let resp={
+                    status:'account_not_verfied',
+                    userName:response.email,
+                    retailerId:response.retailerId
+                }
+                res.send(resp)
+            }
+            else{
+                let resp={
+                    status:'success',
+                    userName:response.email,
+                    retailerId:response.retailerId
+                }
+                res.send(resp)
 
-module.exports={changePassword,updateRetailer,insertStatment,signUp}
+            }
+        } catch (error) {
+            let responses={status:"Invalid User name Passwords Supplied"}
+                res.send(responses)
+           
+                
+        }
+            //console.log(response.is_verfiied)
+            //res.send(response)
+        }    
+    })
+
+    //res.send(passwordCrypted)
+}
+
+
+module.exports={changePassword,updateRetailer,insertStatment,signUp,login,changePasswordConf}

@@ -4,8 +4,6 @@ const converter = require('json-2-csv');
 const commands=require('./op/commonSQL.js');
 const profile=require('./op/user_profile.js');
 const nodemailer = require('nodemailer');
-
-
 const https = require('https')
 
 
@@ -78,9 +76,16 @@ app.get('/vendor',(req,res)=>{
 })
 
 //Registration units
+app.post('/confirm_email',(req,res)=>{
+    profile.changePasswordConf(req,res);
+})
 
 app.post('/chp',(req,res)=>{
-    profile.changePassword(res,req);
+    profile.changePassword(req,res);
+})
+app.post('/login',(req,res)=>{
+
+    profile.login(req,res);
 })
 app.post('/signup',(req,res)=>{
   let command=profile.signUp(req.body,res);
@@ -95,6 +100,4 @@ app.post('/reg',(req,res)=>{
     commands.generateInsertSql(req.body.data,req.body.tableName,res) 
 })
 
-
-
-app.listen()
+app.listen(3000)

@@ -79,7 +79,7 @@ CREATE TABLE `Retailer` (
   `sex` varchar(10) DEFAULT NULL,
   `dob` varchar(45) DEFAULT NULL,
   `date_created` datetime DEFAULT NULL,
-  `is_verfiied` tinyint DEFAULT NULL,
+  `is_verfiied` tinyint DEFAULT false,
   `deposite` double DEFAULT NULL,
   `remaining_amount` double DEFAULT NULL,
   `trial_end` tinyint DEFAULT NULL,
