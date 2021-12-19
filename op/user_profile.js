@@ -18,9 +18,6 @@ function generateInsertSql(req,tableName,res){
     execute(res,command)
 }
 
-
-
-
 function selectAll(res,tableName){
     execute(res,`SELECT * FROM ${tableName}`);
 }
@@ -44,7 +41,7 @@ function changePassword(req,res){
             if(result.affectedRows=== 1){
                 let response={
                     status:'success',
-                    message:'password changed Succefully'
+                    message:'Your password was changed Succefully'
             }
                 res.send(response)
 
@@ -52,15 +49,14 @@ function changePassword(req,res){
             else{
                 let response={
                     status:'fialed',
-                    message:'Passwrod was not changed'
+                    message:'Your Passwrod was not Updated'
             }
             res.send(response)
             }
         }
 
-        //res.send(result)
     })
-       // res.send(query)
+      
     }
     else{
         let response={
@@ -69,20 +65,17 @@ function changePassword(req,res){
     }
     res.send(response)
     }
-        
 }
 function changePasswordConf(req,res){
     if(req.body.password===req.body.re_password){
-     let salt ='a1624ccea70b57f377372bac81bda372'
+    let salt ='a1624ccea70b57f377372bac81bda372'
     let newPassword=crypto.pbkdf2Sync(req.body.password, salt,  1000, 64, `sha512`).toString(`hex`);
     let password=crypto.pbkdf2Sync(req.body.oldPassword, salt,  1000, 64, `sha512`).toString(`hex`);
-
     //update the password
     let query=`update  beshegercom_inventory.Retailer
     set Retailer.password='${newPassword}',
      Retailer.is_verified='1'
      where (Retailer.mobile='${req.body.userName}' or Retailer.email='${req.body.userName}') and Retailer.password='${password}'`;
-
 
      con.query(query ,(err,result)=>{
         if(err)
@@ -99,15 +92,14 @@ function changePasswordConf(req,res){
             else{
                 let response={
                     status:'fialed',
-                    message:'Passwrod was not changed'
+                    message:'Your Password was not changed'
             }
             res.send(response)
             }
         }
 
-        //res.send(result)
+      
     })
-       // res.send(query)
     }
     else{
         let response={
@@ -120,8 +112,6 @@ function changePasswordConf(req,res){
 }
 
 function updateRetailer(res,req){
-    //let query=`SELECT * FROM beshegercom_inventory.Retailer 
-    //where (Retailer.mobile='${userName}' or Retailer.email='${userName}') and Retailer.password='${password}'`;
     
 let query=`UPDATE beshegercom_inventory.Retailer
 SET
@@ -176,14 +166,12 @@ function insertStatment(data,tableName){
 function signUp(data,res){
 
     let password=randomstring.generate(8);
-    //let salt = crypto.randomBytes(16).toString('hex');
+   
     let salt ='a1624ccea70b57f377372bac81bda372'
     data.password=crypto.pbkdf2Sync(password, salt,  1000, 64, `sha512`).toString(`hex`);
-   //res.send(data);
-    //data.password=pp;
+  
    let commandStatement=insertStatment(data,'Retailer');
 
-   //res.send(commandStatement);
    execute(commandStatement,res,data,password)
 }
 
@@ -204,7 +192,7 @@ function execute(command,res,data,password){
      })
  }
 
- function makeRequest(data,res,password){
+function makeRequest(data,res,password){
     axios.post(host, {
         title: "Retalier ID ",
         message: "Dear Customer Your Account is created Succefully and your Deffault password is "+password,
@@ -243,7 +231,8 @@ function login(req,res){
             }
             if(response.is_verified===0){
                 let resp={
-                    status:'account_not_verfied',
+                    loginState:false,
+                    reason:'account_not_verified',
                     userName:response.email,
                     retailerId:response.retailerId
                 }
@@ -251,7 +240,8 @@ function login(req,res){
             }
             else{
                 let resp={
-                    status:'success',
+                    loginState:true,
+                    reason:'success',
                     userName:response.email,
                     retailerId:response.retailerId
                 }
@@ -259,17 +249,19 @@ function login(req,res){
 
             }
         } catch (error) {
-            let responses={status:"Invalid User name Passwords Supplied"}
+            let responses={
+                reason:"Invalid User Name and/Or Passwords Supplied",
+                loginState:false
+            }
                 res.send(responses)
            
                 
         }
-            //console.log(response.is_verfiied)
-            //res.send(response)
+           
         }    
     })
 
-    //res.send(passwordCrypted)
+    
 }
 
 
