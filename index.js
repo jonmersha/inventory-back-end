@@ -43,9 +43,8 @@ app.use(
 //   app.get('/',(req,res)=>{
 //       res.sendFile('index.html')
 //   })
-
-
 //information 
+
 app.get('/retailer',(req,res)=>{
     commands.selectAll(res,'Retailer');  
     
@@ -98,6 +97,11 @@ app.post('/update_retailer',(req,res)=>{
 
 app.post('/reg',(req,res)=>{
     commands.generateInsertSql(req.body.data,req.body.tableName,res) 
+})
+
+///Quary String Test
+app.get('/combo',(req,res)=>{
+    commands.getComboData(req.query,res)
 })
 
 app.listen(3000)

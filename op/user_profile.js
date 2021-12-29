@@ -32,8 +32,6 @@ function changePassword(req,res){
     let query=`update  beshegercom_inventory.Retailer
     set Retailer.password='${newPassword}'
      where (Retailer.mobile='${req.body.userName}' or Retailer.email='${req.body.userName}') and Retailer.password='${password}'`;
-
-
      con.query(query ,(err,result)=>{
         if(err)
         res.send(err)
@@ -68,6 +66,15 @@ function changePassword(req,res){
 }
 function changePasswordConf(req,res){
     if(req.body.password===req.body.re_password){
+        if(req.body.password===req.body.oldPassword){
+            let response={
+                status:'Error',
+                success:false,
+                message:'New Password and Old Passwords are the same'
+        }
+            res.send(response)
+
+        }else{
     let salt ='a1624ccea70b57f377372bac81bda372'
     let newPassword=crypto.pbkdf2Sync(req.body.password, salt,  1000, 64, `sha512`).toString(`hex`);
     let password=crypto.pbkdf2Sync(req.body.oldPassword, salt,  1000, 64, `sha512`).toString(`hex`);
@@ -76,7 +83,6 @@ function changePasswordConf(req,res){
     set Retailer.password='${newPassword}',
      Retailer.is_verified='1'
      where (Retailer.mobile='${req.body.userName}' or Retailer.email='${req.body.userName}') and Retailer.password='${password}'`;
-
      con.query(query ,(err,result)=>{
         if(err)
         res.send(err)
@@ -84,7 +90,8 @@ function changePasswordConf(req,res){
             if(result.affectedRows=== 1){
                 let response={
                     status:'success',
-                    message:'password changed Succefully'
+                    success:true,
+                    message:'your deffault password changed Succefully and email confirmed'
             }
                 res.send(response)
 
@@ -92,6 +99,7 @@ function changePasswordConf(req,res){
             else{
                 let response={
                     status:'fialed',
+                    success:false,
                     message:'Your Password was not changed'
             }
             res.send(response)
@@ -100,10 +108,12 @@ function changePasswordConf(req,res){
 
       
     })
+}
     }
     else{
         let response={
             status:'fialed',
+            success:false,
             message:'password missamatching'
     }
     res.send(response)
@@ -164,14 +174,10 @@ function insertStatment(data,tableName){
     return command;
 }
 function signUp(data,res){
-
     let password=randomstring.generate(8);
-   
     let salt ='a1624ccea70b57f377372bac81bda372'
     data.password=crypto.pbkdf2Sync(password, salt,  1000, 64, `sha512`).toString(`hex`);
-  
    let commandStatement=insertStatment(data,'Retailer');
-
    execute(commandStatement,res,data,password)
 }
 
@@ -179,15 +185,18 @@ function execute(command,res,data,password){
     // console.log(command)
      con.query(command,(err,result)=>{
          if(err)
-         if(err.code==='ER_DUP_ENTRY')
-          res.send({"Status":"Mobile or Email Already used",Details:`Dear Customer email Id or mobile number is already used please change it or login using Your username and password`})
+         if(err.code==='ER_DUP_ENTRY'){
+            let response={
+                Status:'Error',
+                message:'Mobile or Email Already used'
+             }
+              res.send(response)
+         }
           else
           res.send(err)
          else
          {
-        
             makeRequest(data,res,password);
-
          }
      })
  }
@@ -201,12 +210,22 @@ function makeRequest(data,res,password){
         apiKey: "kzdjhlxasguiBWYXE24679HJKSYXFE9283787D213221"
       })
       .then(ress => {
-          console.log(ress)
-          res.send(`Your Account is created and default Password is sent to your registered email`)
+
+        let response={
+            Status:'success',
+            message:'Your Account is created and the and you default password is sent to regstered email '
+         }
+          
+          res.send(response)
       })
       .catch(error => {
+
+        let response={
+            Status:'Error',
+            message:'Eamil Not Sent To users'+error.code
+         }
           console.log(error);
-          res.send('Eamil Not Sent To users'+error.code)
+          res.send(response)
       })
 
 }
@@ -226,34 +245,61 @@ function login(req,res){
             try {
             let response=result[0]
             if(response===null){
-                res.send("Failed To Login")
+                let resp={
+                    Retailer_id:null,
+                    first_name:null,
+                    midle_name:null,
+                    last_name:null,
+                    email:null,
+                    password:null,
+                    loginStatus:false
+                }
+
+                res.send(resp)
                
             }
             if(response.is_verified===0){
                 let resp={
-                    loginState:false,
-                    reason:'account_not_verified',
-                    userName:response.email,
-                    retailerId:response.retailerId
+                    Retailer_id:null,
+                    first_name:null,
+                    midle_name:null,
+                    last_name:null,
+                    email:null,
+                    password:null,
+                    message:'Account Not Verified',
+                    loginStatus:false
+
                 }
                 res.send(resp)
             }
             else{
                 let resp={
-                    loginState:true,
-                    reason:'success',
-                    userName:response.email,
-                    retailerId:response.retailerId
+                    Retailer_id:response.Retailer_id,
+                    first_name:response.first_name,
+                    midle_name:response.midle_name,
+                    last_name:response.last_name,
+                    email:response.email,
+                    password:req.body.passWord,
+                    message:'Account Verified',
+                    loginStatus:true
                 }
                 res.send(resp)
 
             }
         } catch (error) {
-            let responses={
-                reason:"Invalid User Name and/Or Passwords Supplied",
-                loginState:false
+           
+            let resp={
+                Retailer_id:null,
+                first_name:null,
+                midle_name:null,
+                last_name:null,
+                email:null,
+                password:null,
+                message:'Invalid User Name and/Or Passwords Supplied',
+                loginStatus:false
+
             }
-                res.send(responses)
+                res.send(resp)
            
                 
         }

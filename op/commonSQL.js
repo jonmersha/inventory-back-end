@@ -14,29 +14,72 @@ function generateInsertSql(req,tableName,res){
     execute(res,command,tableName);
 }
 
-
 function execute(res,command,tableName){
    // console.log(command)
     con.query(command,(err,result)=>{
         if(err)
-        if(err.code==='ER_DUP_ENTRY')
-         res.send({"Status":"duplicate Entry for key values",Details:err.sqlMessage})
-         else
-         res.send(err)
+        if(err.code==='ER_DUP_ENTRY'){
+            let rsp={
+                status:false,
+                message:" Registereduplicate Entry",
+                affectedRows:0,
+                id:0
+            }
+         res.send(rsp)
+
+        }
+
+         else{
+            let rsp={
+                status:false,
+                message:err,
+                affectedRows:0,
+                id:0
+            }
+
+         res.send(rsp)
+         }
         else
         {
-            if(tableName==='Retailer'){
-                res.send({"Status":"Success",details:result}); 
-            }
-            else
-            res.send({"Status":"Success",details:result});
-
+                let rsp={
+                    status:true,
+                    message:tableName+" Registered",
+                    affectedRows:result.affectedRows,
+                    id:result.insertId
+                }
+                res.send(rsp);  
         }
     })
 }
+function queryExec(res,command){
+    con.query(command,(err,result)=>{
+
+        if(err){
+            let rsp={
+                success:false,
+                message:err.code,
+                response:err
+            }
+            res.send(rsp)
+
+        }
+        else{
+            let rsp={
+                success:true,
+                message:"excecusion succefully completed",
+                response:result
+            }
+            res.send(rsp)
+            
+        }
+        
+    })
+
+}
+
 
 function selectAll(res,tableName){
-    execute(res,`SELECT * FROM ${tableName}`);
+    queryExec(res,`SELECT * FROM ${tableName}`);
 }
 
 function retailerActvity(res,tableName,key){
@@ -48,6 +91,38 @@ function retailerActvity(res,tableName,key){
     })
 
 }
+function getComboData(req,res){
+    let quaryString
+if(req.tableName==='Inventory') 
+quaryString =`SELECT product_id as 'id',product_name as 'name',remaining_amount as opening_amount FROM ${req.tableName} where Retailer_id=${req.id}`
+else if(req.tableName==='Vendor')
+quaryString =`SELECT vendor_id as 'id',vendor_name as 'name', FROM ${req.tableName} where Retailer_id=${req.id}`
+else if(req.tableName==='Category')
+quaryString =`SELECT category_id as 'id',Description as 'name',Description FROM ${req.tableName} where Retailer_id=${req.id}`
+
+else if(req.tableName==='Store')
+quaryString =`SELECT store_id as 'id',Store_name as 'name' FROM ${req.tableName} where Retailer_id=${req.id}`
 
 
-module.exports={generateInsertSql,selectAll,retailerActvity}
+//console.log(quaryString)
+   
+    con.query(quaryString,(err,result)=>{
+        if(err){
+            let rsp={
+                id:null,
+                name:null
+            }
+            res.send(rsp)
+
+        }
+        else{
+           // console.log(result)
+            res.send(result)
+            
+        }
+        
+    })
+}
+
+
+module.exports={generateInsertSql,selectAll,retailerActvity,getComboData}
