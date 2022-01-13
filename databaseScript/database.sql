@@ -1,70 +1,3 @@
-CREATE TABLE `Category` (
-  `category_id` int NOT NULL AUTO_INCREMENT,
-  `Retailer_id` int NOT NULL,
-  `Name` varchar(100) DEFAULT NULL,
-  `Description` varchar(500) DEFAULT NULL,
-  PRIMARY KEY (`category_id`),
-  KEY `CATEGORY_TO_RETAILERS` (`Retailer_id`),
-  CONSTRAINT `CATEGORY_TO_RETAILERS` FOREIGN KEY (`Retailer_id`) REFERENCES `Retailer` (`Retailer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
-
-CREATE TABLE `Customer` (
-  `customer_id` int NOT NULL AUTO_INCREMENT,
-  `Retail_id` int DEFAULT NULL,
-  `first_name` varchar(100) DEFAULT NULL,
-  `midle_name` varchar(100) DEFAULT NULL,
-  `last_anme` varchar(100) DEFAULT NULL,
-  `mobile` varchar(13) DEFAULT NULL,
-  `email` varchar(50) DEFAULT NULL,
-  `tinNumber` varchar(20) DEFAULT NULL,
-  `reg_date` date DEFAULT NULL,
-  PRIMARY KEY (`customer_id`),
-  KEY `CUSTOMER_TO_RETAILER_FK` (`Retail_id`),
-  CONSTRAINT `CUSTOMER_TO_RETAILER_FK` FOREIGN KEY (`Retail_id`) REFERENCES `Retailer` (`Retailer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
-
-CREATE TABLE `Inventory` (
-  `product_id` int NOT NULL AUTO_INCREMENT,
-  `product_name` varchar(100) DEFAULT NULL,
-  `Descriptions` varchar(500) DEFAULT NULL,
-  `Image_path` varchar(500) DEFAULT NULL,
-  `Category` int DEFAULT NULL,
-  `unit_of_measure` varchar(10) DEFAULT NULL,
-  `Retailer_id` int DEFAULT NULL,
-  `remaining_amount` int DEFAULT NULL,
-  `min_quntity_to_order` int DEFAULT NULL,
-  PRIMARY KEY (`product_id`),
-  KEY `INVENTORY_TO_CATEGORY` (`Category`),
-  KEY `INVENTORY_TO_RETAILER` (`Retailer_id`),
-  CONSTRAINT `INVENTORY_TO_CATEGORY` FOREIGN KEY (`Category`) REFERENCES `Category` (`category_id`),
-  CONSTRAINT `INVENTORY_TO_RETAILER` FOREIGN KEY (`Retailer_id`) REFERENCES `Retailer` (`Retailer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
-
-CREATE TABLE `Purchases` (
-  `purchase_id` int NOT NULL AUTO_INCREMENT,
-  `product_code` int DEFAULT NULL,
-  `vendor` int DEFAULT NULL,
-  `store_id` int DEFAULT NULL,
-  `purchase_cost` double DEFAULT NULL,
-  `Selling_price` double DEFAULT NULL,
-  `openinig_quantity` int DEFAULT NULL,
-  `purchased_amount` int DEFAULT NULL,
-  `Retailer_id` int DEFAULT NULL,
-  `purchase_date` datetime DEFAULT NULL,
-  `exprations_date` date DEFAULT NULL,
-  `production` date DEFAULT NULL,
-  PRIMARY KEY (`purchase_id`),
-  KEY `PURCHASE_TO_INVENTORY` (`product_code`),
-  KEY `PURCHASE_TO_STORE` (`store_id`),
-  KEY `PURCHASE_TO_VENDOR` (`vendor`),
-  KEY `PURCHASE_TO_RETAILER` (`Retailer_id`),
-  CONSTRAINT `PURCHASE_TO_INVENTORY` FOREIGN KEY (`product_code`) REFERENCES `Inventory` (`product_id`),
-  CONSTRAINT `PURCHASE_TO_RETAILER` FOREIGN KEY (`Retailer_id`) REFERENCES `Retailer` (`Retailer_id`),
-  CONSTRAINT `PURCHASE_TO_STORE` FOREIGN KEY (`store_id`) REFERENCES `Store` (`store_id`),
-  CONSTRAINT `PURCHASE_TO_VENDOR` FOREIGN KEY (`vendor`) REFERENCES `Vendor` (`vendor_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
-
-
 CREATE TABLE `Retailer` (
   `Retailer_id` int NOT NULL AUTO_INCREMENT,
   `first_name` varchar(50) DEFAULT NULL,
@@ -87,6 +20,76 @@ CREATE TABLE `Retailer` (
   UNIQUE KEY `mobile` (`mobile`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Category` (
+  `category_id` int NOT NULL AUTO_INCREMENT,
+  `Retailer_id` int NOT NULL,
+  `Name` varchar(100) DEFAULT NULL,
+  `Description` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`category_id`),
+  KEY `CATEGORY_TO_RETAILERS` (`Retailer_id`),
+  CONSTRAINT `CATEGORY_TO_RETAILERS` FOREIGN KEY (`Retailer_id`) REFERENCES `Retailer` (`Retailer_id`)
+) 
+
+CREATE TABLE `Customer` (
+  `customer_id` int NOT NULL AUTO_INCREMENT,
+  `Retail_id` int DEFAULT NULL,
+  `first_name` varchar(100) DEFAULT NULL,
+  `midle_name` varchar(100) DEFAULT NULL,
+  `last_anme` varchar(100) DEFAULT NULL,
+  `mobile` varchar(13) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `tinNumber` varchar(20) DEFAULT NULL,
+  `reg_date` date DEFAULT NULL,
+  PRIMARY KEY (`customer_id`),
+  KEY `CUSTOMER_TO_RETAILER_FK` (`Retail_id`),
+  CONSTRAINT `CUSTOMER_TO_RETAILER_FK` FOREIGN KEY (`Retail_id`) REFERENCES `Retailer` (`Retailer_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
+
+
+CREATE TABLE `Product` (
+  `product_id` int NOT NULL AUTO_INCREMENT,
+  `product_name` varchar(100) DEFAULT NULL,
+  `Descriptions` varchar(500) DEFAULT NULL,
+  `Image_path` varchar(500) DEFAULT NULL,
+  `Category` int DEFAULT NULL,
+  `unit_of_measure` varchar(10) DEFAULT NULL,
+  `Retailer_id` int DEFAULT NULL,
+  `remaining_amount` int DEFAULT NULL,
+  `min_quntity_to_order` int DEFAULT NULL,
+  `opening_quanitity` int DEFAULT NULL,
+  `unit_price` float DEFAULT NULL,
+  `selling_price` float DEFAULT NULL,
+  PRIMARY KEY (`product_id`),
+  KEY `INVENTORY_TO_CATEGORY` (`Category`),
+  KEY `INVENTORY_TO_RETAILER` (`Retailer_id`),
+  CONSTRAINT `INVENTORY_TO_CATEGORY` FOREIGN KEY (`Category`) REFERENCES `Category` (`category_id`),
+  CONSTRAINT `INVENTORY_TO_RETAILER` FOREIGN KEY (`Retailer_id`) REFERENCES `Retailer` (`Retailer_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `Purchases` (
+  `purchase_id` int NOT NULL AUTO_INCREMENT,
+  `product_code` int DEFAULT NULL,
+  `vendor` int DEFAULT NULL,
+  `Purchase_cost` double DEFAULT NULL,
+  `Selling_price` double DEFAULT NULL,
+  `Purchased_qty` int DEFAULT NULL,
+  `Retailer_id` int DEFAULT NULL,
+  `purchase_date` datetime DEFAULT NULL,
+  `exprations_date` date DEFAULT NULL,
+  `production` date DEFAULT NULL,
+  PRIMARY KEY (`purchase_id`),
+  KEY `PURCHASE_TO_INVENTORY` (`product_code`),
+  KEY `PURCHASE_TO_VENDOR` (`vendor`),
+  KEY `PURCHASE_TO_RETAILER` (`Retailer_id`),
+  CONSTRAINT `PURCHASE_TO_INVENTORY` FOREIGN KEY (`product_code`) REFERENCES `Product` (`product_id`),
+  CONSTRAINT `PURCHASE_TO_RETAILER` FOREIGN KEY (`Retailer_id`) REFERENCES `Retailer` (`Retailer_id`),
+  CONSTRAINT `PURCHASE_TO_VENDOR` FOREIGN KEY (`vendor`) REFERENCES `Vendor` (`vendor_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+
+
+
 
 CREATE TABLE `retailer_staff` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -174,4 +177,11 @@ primary key(country_code,region,city_name)
 );
 
 
+
+
+
+
+product category
+product
+purchases
 

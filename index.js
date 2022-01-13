@@ -24,6 +24,7 @@ app.use(
   app.use(cores())
   app.options('*',cores())
   
+  
   app.use(express.json())
   app.use('/', express.static(path.join(__dirname, 'public')))
 
@@ -56,9 +57,9 @@ app.get('/customer',(req,res)=>{
 app.get('/category',(req,res)=>{
     commands.selectAll(res,'Category');  
 })
-app.get('/inventory',(req,res)=>{
+app.get('/product',(req,res)=>{
 
-    commands.selectAll(res,'Inventory');   
+    commands.selectAll(res,'Product');   
 })
 app.get('/purchase',(req,res)=>{
     commands.selectAll(res,'Purchases');    

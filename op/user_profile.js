@@ -81,7 +81,7 @@ function changePasswordConf(req,res){
     //update the password
     let query=`update  beshegercom_inventory.Retailer
     set Retailer.password='${newPassword}',
-     Retailer.is_verified='1'
+     Retailer.is_verfiied= 1
      where (Retailer.mobile='${req.body.userName}' or Retailer.email='${req.body.userName}') and Retailer.password='${password}'`;
      con.query(query ,(err,result)=>{
         if(err)
