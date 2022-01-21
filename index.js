@@ -11,7 +11,8 @@ var host = 'https://hiramailer.herokuapp.com/em';
 
 const cores =require('cors')
 
-const path = require('path')
+const path = require('path');
+const { registaerPurchase } = require('./op/product-purchase.js');
 
 // app.set('view engine', 'ejs');
 // app.set('views', path.join(__dirname, 'views'));
@@ -103,6 +104,17 @@ app.post('/reg',(req,res)=>{
 ///Quary String Test
 app.get('/combo',(req,res)=>{
     commands.getComboData(req.query,res)
+})
+
+//===================================purchase registration========================
+
+const purchase =require('./op/product-purchase')
+app.post('/purchase',(req,res)=>{
+
+    purchase.registaerPurchase(req,res)
+
+
+
 })
 
 app.listen(3000)

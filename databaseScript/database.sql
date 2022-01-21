@@ -78,7 +78,7 @@ CREATE TABLE `Purchases` (
   `Retailer_id` int DEFAULT NULL,
   `purchase_date` datetime DEFAULT NULL,
   `exprations_date` date DEFAULT NULL,
-  `production` date DEFAULT NULL,
+  `production_date` date DEFAULT NULL,
   PRIMARY KEY (`purchase_id`),
   KEY `PURCHASE_TO_INVENTORY` (`product_code`),
   KEY `PURCHASE_TO_VENDOR` (`vendor`),
