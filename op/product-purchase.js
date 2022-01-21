@@ -1,5 +1,6 @@
 const con=require('./database.js')
 const nodemailer = require('nodemailer');
+
 function generateInsertSql(req,tableName,res){
     var keysString='';
      var valueStirng ='';
@@ -149,9 +150,9 @@ function generateMultipleInsert(data){
 
 
     for(var j=0;j<data.length-1;j++){
-        valueStirng+=`'${gettingValues(data[j])}' ,` 
+        valueStirng+=`${gettingValues(data[j])} ,` 
     }
-    valueStirng+=`'${gettingValues(data[data.length-1])}'`
+    valueStirng+=`${gettingValues(data[data.length-1])}`
     var command= `INSERT INTO Purchases (${keysString}) VALUES ${valueStirng};`;
     console.log(command)
     //execute(res,command,tableName);
