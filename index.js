@@ -110,11 +110,7 @@ app.get('/combo',(req,res)=>{
 
 const purchase =require('./op/product-purchase')
 app.post('/purchase',(req,res)=>{
-
-    purchase.registaerPurchase(req,res)
-
-
-
+    purchase.registerPurchase(req,res)
 })
 
 app.listen(3000)
