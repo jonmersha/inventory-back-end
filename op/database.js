@@ -1,5 +1,6 @@
 const mysql=require('mysql')
 var con = mysql.createConnection({
+  multipleStatements: true,
     host: "localhost",
     user: "beshegercom_inventory",
     database:"beshegercom_inventory",

@@ -93,18 +93,19 @@ function retailerActvity(res,tableName,key){
 }
 function getComboData(req,res){
     let quaryString
-if(req.tableName==='Inventory') 
+if(req.tableName==='Product') 
 quaryString =`SELECT product_id as 'id',product_name as 'name',remaining_amount as opening_amount FROM ${req.tableName} where Retailer_id=${req.id}`
 else if(req.tableName==='Vendor')
-quaryString =`SELECT vendor_id as 'id',vendor_name as 'name', FROM ${req.tableName} where Retailer_id=${req.id}`
+quaryString =`SELECT vendor_id as 'id',vendor_name as 'name' FROM ${req.tableName} where Retailer_id=${req.id}`
 else if(req.tableName==='Category')
 quaryString =`SELECT category_id as 'id',Description as 'name',Description FROM ${req.tableName} where Retailer_id=${req.id}`
 
 else if(req.tableName==='Store')
 quaryString =`SELECT store_id as 'id',Store_name as 'name' FROM ${req.tableName} where Retailer_id=${req.id}`
+else if(req.tableName==='Product')
+quaryString =`SELECT product_id as 'id',product_name as 'name' FROM Product where Retailer_id=${req.id}`
 
-
-//console.log(quaryString)
+console.log(quaryString)
    
     con.query(quaryString,(err,result)=>{
         if(err){
@@ -113,10 +114,9 @@ quaryString =`SELECT store_id as 'id',Store_name as 'name' FROM ${req.tableName}
                 name:null
             }
             res.send(rsp)
-
         }
         else{
-           // console.log(result)
+           console.log(result)
             res.send(result)
             
         }

@@ -5,8 +5,6 @@ const commands=require('./op/commonSQL.js');
 const profile=require('./op/user_profile.js');
 const nodemailer = require('nodemailer');
 const https = require('https')
-
-
 var host = 'https://hiramailer.herokuapp.com/em';
 
 const cores =require('cors')
@@ -110,7 +108,20 @@ app.get('/combo',(req,res)=>{
 
 const purchase =require('./op/product-purchase')
 app.post('/purchase',(req,res)=>{
-    purchase.registerPurchase(req,res)
+     console.log(req.body)
+    // res.send("tets")
+   purchase.registerPurchase(req,res)
+})
+app.post('/purchase_order_number',(req,res)=>{
+    purchase.getPurchaseOrderNumber(req,res)
+})
+app.post('/close_purchase_order_number',(req,res)=>{
+    purchase.closeOrderNumber(req,res)
+})
+
+app.post('/vendor_detail',(req,res)=>{
+    purchase.getVendorDetail(req,res)
+
 })
 
 app.listen(3000)

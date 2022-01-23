@@ -42,7 +42,6 @@ function changePassword(req,res){
                     message:'Your password was changed Succefully'
             }
                 res.send(response)
-
             }
             else{
                 let response={
@@ -94,7 +93,6 @@ function changePasswordConf(req,res){
                     message:'your deffault password changed Succefully and email confirmed'
             }
                 res.send(response)
-
             }
             else{
                 let response={
@@ -105,8 +103,6 @@ function changePasswordConf(req,res){
             res.send(response)
             }
         }
-
-      
     })
 }
     }
@@ -117,12 +113,9 @@ function changePasswordConf(req,res){
             message:'password missamatching'
     }
     res.send(response)
-    }
-        
+    }     
 }
-
-function updateRetailer(res,req){
-    
+function updateRetailer(res,req){ 
 let query=`UPDATE beshegercom_inventory.Retailer
 SET
 first_name = '${req.body.first_name}',
@@ -134,8 +127,6 @@ city = '${req.body.city}',
 sex = '${req.body.sex}',
 dob = '${req.body.dob}'
 WHERE Retailer_id = ${req.body.Retailer_id}`;
-
-//res.send(query);
      con.query(query ,(err,result)=>{
          if(err)
          res.send(err)
@@ -154,10 +145,8 @@ WHERE Retailer_id = ${req.body.Retailer_id}`;
         }
         res.send(response)
         }
-
        // res.send(result)
      })
-
 }
 function insertStatment(data,tableName){
     
@@ -229,7 +218,6 @@ function makeRequest(data,res,password){
       })
 
 }
-
 function login(req,res){
     let salt ='a1624ccea70b57f377372bac81bda372' //crypto.randomBytes(16).toString('hex');
     console.log(salt)
@@ -254,9 +242,7 @@ function login(req,res){
                     password:null,
                     loginStatus:false
                 }
-
-                res.send(resp)
-               
+                res.send(resp) 
             }
             if(response.is_verified===0){
                 let resp={
@@ -268,7 +254,6 @@ function login(req,res){
                     password:null,
                     message:'Account Not Verified',
                     loginStatus:false
-
                 }
                 res.send(resp)
             }
@@ -299,16 +284,10 @@ function login(req,res){
                 loginStatus:false
 
             }
-                res.send(resp)
-           
-                
+                res.send(resp)         
         }
            
         }    
-    })
-
-    
+    }) 
 }
-
-
 module.exports={changePassword,updateRetailer,insertStatment,signUp,login,changePasswordConf}
