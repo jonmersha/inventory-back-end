@@ -7,10 +7,12 @@ const nodemailer = require('nodemailer');
 const https = require('https')
 var host = 'https://hiramailer.herokuapp.com/em';
 
+
 const cores =require('cors')
 
 const path = require('path');
 const { registaerPurchase } = require('./op/product-purchase.js');
+// const { registaerPurchase } = require('./op/preduct-sells.js');
 
 // app.set('view engine', 'ejs');
 // app.set('views', path.join(__dirname, 'views'));
@@ -115,13 +117,24 @@ app.post('/purchase',(req,res)=>{
 app.post('/purchase_order_number',(req,res)=>{
     purchase.getPurchaseOrderNumber(req,res)
 })
-app.post('/close_purchase_order_number',(req,res)=>{
+app.post('/close_order_number',(req,res)=>{
     purchase.closeOrderNumber(req,res)
 })
-
 app.post('/vendor_detail',(req,res)=>{
     purchase.getVendorDetail(req,res)
 
 })
+
+const sells = require('./op/product-sells')
+
+app.post('/sells_order_number',(req,res)=>{
+    sells.getSellsOrderNumber(req,res)
+})
+app.post('/new_sells',(req,res)=>{
+    console.log(req.body)
+    //res.send(req.body)
+    // sells.registerSells(req,res)
+})
+
 
 app.listen(3000)

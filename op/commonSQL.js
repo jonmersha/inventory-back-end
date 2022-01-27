@@ -99,11 +99,13 @@ else if(req.tableName==='Vendor')
 quaryString =`SELECT vendor_id as 'id',vendor_name as 'name' FROM ${req.tableName} where Retailer_id=${req.id}`
 else if(req.tableName==='Category')
 quaryString =`SELECT category_id as 'id',Description as 'name',Description FROM ${req.tableName} where Retailer_id=${req.id}`
-
 else if(req.tableName==='Store')
 quaryString =`SELECT store_id as 'id',Store_name as 'name' FROM ${req.tableName} where Retailer_id=${req.id}`
 else if(req.tableName==='Product')
 quaryString =`SELECT product_id as 'id',product_name as 'name' FROM Product where Retailer_id=${req.id}`
+
+else if(req.tableName==='Customer')
+quaryString =`SELECT customer_id as 'id',first_name as 'name',last_anme,midle_name, mobile,email,tinNumber FROM Customer where Retail_id=${req.id}`
 
 console.log(quaryString)
    

@@ -33,7 +33,6 @@ res.send(response)
  })
 
 }
-
 function generateMultipleInsert(data,tableName){
     var keysString='';
      var valueStirng ='';

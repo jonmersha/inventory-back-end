@@ -1,10 +1,5 @@
 const con=require('./database.js')
-// const nodemailer = require('nodemailer');
-// const command = require('nodemon/lib/config/command');
-// const { connect } = require('./database.js');
 
-
-//======================================================
 
 function registerSells(req,res){
     let data=req.body.data
@@ -25,9 +20,7 @@ res.send(response)
             status:true,
             message:result
         }
-        //console.log(response)
-       // closePurchesOrder(req.body.data[0].Retailer_Id)
-     res.send(response)
+       res.send(response)
      }
      
  })
@@ -57,7 +50,7 @@ let updateStatment=[]
                     SET preve_amount= remaining_amount, 
                     remaining_amount=remaining_amount+-{data[data.length-1].Purchased_qty}, selling_price=${data[data.length-1].Selling_price} WHERE product_id =${data[data.length-1].product_code};`
     valueStirng+=`${gettingValues(data[data.length-1])}`
-   return `INSERT INTO ${tableName}(${keysString}) VALUES ${valueStirng}; ${updateStatment}`;
+   return `INSERT INTO Selles (${keysString}) VALUES ${valueStirng}; ${updateStatment}`;
 
 }
 function gettingValues(data){
@@ -70,14 +63,14 @@ function gettingValues(data){
     return `(${valueStirng})`
 }
 
-function getPurchaseOrderNumber(req,res){
-    let query=`SELECT * FROM purchase_order_sequaence where order_number_status=0 and Retailer_id=${req.body.Retailer_id}`
+function getSellsOrderNumber(req,res){
+    let query=`SELECT * FROM sells_order_sequaence where order_number_status=0 and Retailer_id=${req.body.Retailer_id}`
    console.log(query)
     con.query(query,(error,result)=>{
         if(error) res.send(error)
         else{
             if(result.length==0){
-            generatePurchaseOrderNumber(req,res)
+            generateSellsOrderNumber(req,res)
             }
             else
             res.send(result)
@@ -86,36 +79,34 @@ function getPurchaseOrderNumber(req,res){
     })
 
 }
-function generatePurchaseOrderNumber(req,res){
-    let query=`INSERT INTO purchase_order_sequaence(Retailer_id) values(${req.body.Retailer_id})`
+function generateSellsOrderNumber(req,res){
+    let query=`INSERT INTO sells_order_sequaence(Retailer_id) values(${req.body.Retailer_id})`
+    console.log(query);
     con.query(query,(error,result)=>{
         if(error)res.send(error)
         else {
             console.log(result.insertId)
             let insertId=result.insertId
-            let query=`update purchase_order_sequaence 
-                        set 
-                        purchase_order_number='PON-${req.body.Retailer_id}-${insertId}'
-                        where sequance_number=${insertId}
+            let query=`update sells_order_sequaence set sells_order_number='SON-${req.body.Retailer_id}-${insertId}' where sequance_number=${insertId}
                         `
-                        updatepurchaseOrderNumber(req,res,query)            
+                        console.log(query)
+                        updateSellsOrderNumber(req,res,query)            
         }
     })
-    function updatepurchaseOrderNumber(req,res,query){
+    function updateSellsOrderNumber(req,res,query){
         con.query(query,(error,result)=>{
             if(error)res.send(error)
             else{
-                getPurchaseOrderNumber(req,res);
+                getSellsOrderNumber(req,res);
             }
 
         })
     }
 }
-function closeOrderNumber(req,res){
-    let query=`update purchase_order_sequaence
-    set order_number_status=1
-    where Retailer_id=${req.body.Retailer_id}
-    `
+
+
+function closeSellsOrderNumber(req,res){
+    let query=`update sells_order_sequaence set order_number_status=1 where Retailer_id=${req.body.Retailer_id}`
     con.query(query,(error,result)=>{
         if(error)res.send(error)
         else res.send(result)
@@ -124,30 +115,4 @@ function closeOrderNumber(req,res){
 }
 
 
-function closePurchesOrder(Retailer_id){
-    let query=`update purchase_order_sequaence
-    set order_number_status=1
-    where Retailer_id=${Retailer_id}
-    `
-    con.query(query,(error,result)=>{
-        //if(error)res.send(error)
-        //else res.send(result)
-    })
-
-}
-
-
-function getVendorDetail(req,res){
-    let query=`SELECT * FROM Vendor WHERE vendor_id=${req.body.vendor_id}`
-    con.query(query,(error,result)=>{
-        if(error)res.send(error)
-        else {
-            console.log(result)
-            res.send(result)
-        }
-    })
-
-}
-
-
-module.exports={registerSells,getPurchaseOrderNumber,closeOrderNumber,getVendorDetail}
+module.exports={registerSells,getSellsOrderNumber,closeSellsOrderNumber}
